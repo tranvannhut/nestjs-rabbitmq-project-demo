@@ -1,0 +1,56 @@
+# docker-compose.yml
+
+version: '3.8'
+services:
+  mongodb:
+    container_name: mymongodb
+    image: mongo:latest
+    restart: always
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    # environment:
+    #   - MONGO_INITDB_ROOT_USERNAME:$MONGO_USERNAME
+    #   - MONGO_INITDB_ROOT_PASSWORD:$MONGO_PASSWORD
+    ports:
+      - '$MONGO_PORT:$MONGO_PORT'
+    env_file:
+      - .env
+    networks:
+      - db_network
+    volumes:
+      - mongodb_data_container:/data:/data/db
+  # redis:
+  #   container_name: cache
+  #   image: redis:latest
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - redis:/data
+  rabbitmq3:
+    container_name: 'rabbitmq'
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=$RABBITMQ_DEFAULT_USER
+      - RABBITMQ_DEFAULT_PASS=$RABBITMQ_DEFAULT_PASS
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+  # rabbitmq:
+  #   image: rabbitmq:latest
+  #   container_name: rabbitmq
+  #   hostname: localhost
+  #   volumes: -/var/lib/rabbitmq
+  #   ports: -"5672:5672"
+  #     -"15672:15672"
+  #   env_file: -./rabbitmq.env
+
+volumes:
+  mongodb_data_container:
+  # redis:
+  #   driver: local
+networks:
+  db_network:
+# or run command if not create file =>  docker run --name mymongodb -d -p 27017:27017 mongo:latest
